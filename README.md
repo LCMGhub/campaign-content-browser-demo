@@ -35,8 +35,9 @@ All names, copy, and HTML are fictional placeholders for portfolio / GitHub use.
 ### Option A — This folder is the repository root
 
 1. Create a new GitHub repository and push the contents of `campaign-content-browser-demo/` to it.
-2. In the repo: **Settings → Pages → Build and deployment → Source**: **GitHub Actions**.
-3. Push the included workflow (`.github/workflows/pages.yml`). The site deploys on each push to `main`.
+2. Wait for the **Deploy demo to GitHub Pages** workflow to finish (creates the `gh-pages` branch).
+3. **Settings → Pages → Build and deployment → Source**: **Deploy from a branch** → branch **`gh-pages`**, folder **`/ (root)`** → Save.
+4. Open `https://YOUR_USERNAME.github.io/campaign-content-browser-demo/`.
 
 ### Option B — Demo lives in a subfolder of a monorepo
 
