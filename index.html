@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campaign Content Browser (Demo)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <header class="app-top-banner" role="banner">
+      <div class="app-top-banner__inner">
+        <h1 class="app-top-banner__title">Campaign Content Browser <span class="demo-badge">Demo</span></h1>
+        <button
+          type="button"
+          id="help-open"
+          class="btn-help"
+          aria-haspopup="dialog"
+          aria-controls="help-modal"
+          aria-expanded="false"
+        >
+          Help
+        </button>
+      </div>
+    </header>
+
+    <div class="app-shell" id="app-shell">
+      <aside class="sidebar" id="filter-sidebar" aria-label="Filters">
+        <div
+          id="sidebar-loading"
+          class="sidebar__loading"
+          hidden
+          role="status"
+          aria-live="polite"
+          aria-busy="false"
+        >
+          <div class="sidebar__loading-inner">
+            <div class="sidebar__loading-spinner" aria-hidden="true"></div>
+            <p class="sidebar__loading-text">Loading clients…</p>
+          </div>
+        </div>
+
+        <section class="panel" aria-labelledby="client-partition-label">
+          <h2 class="panel__title">
+            <label
+              for="client-partition"
+              id="client-partition-label"
+              class="panel__title-label"
+              >Client</label>
+          </h2>
+          <div class="client-row">
+            <select
+              id="client-partition"
+              class="partition-select"
+              aria-describedby="client-partition-hint"
+            ></select>
+            <button type="button" id="filter-reset" class="btn-reset">
+              Reset
+            </button>
+          </div>
+          <p id="client-partition-hint" class="panel__hint">
+            Pick a client first — content titles and other filters load only for that
+            partition. Reset clears all filters on this page.
+          </p>
+        </section>
+
+        <section class="panel" aria-labelledby="academic-years-label">
+          <h2 id="academic-years-label" class="panel__title">Academic Years</h2>
+          <div
+            id="academic-years"
+            class="panel__scroll panel__chips"
+            role="group"
+            aria-labelledby="academic-years-label"
+          ></div>
+        </section>
+
+        <section class="panel" aria-labelledby="campaigns-label">
+          <h2 id="campaigns-label" class="panel__title">Program Solutions</h2>
+          <div
+            id="campaigns"
+            class="panel__scroll panel__chips"
+            role="group"
+            aria-labelledby="campaigns-label"
+          ></div>
+        </section>
+
+        <section class="panel" aria-labelledby="asset-type-label">
+          <h2 id="asset-type-label" class="panel__title">Asset Type</h2>
+          <div
+            class="segmented"
+            role="radiogroup"
+            aria-labelledby="asset-type-label"
+          >
+            <button
+              type="button"
+              class="segmented__btn is-selected"
+              id="asset-emails"
+              role="radio"
+              aria-checked="true"
+              data-asset="emails"
+            >
+              Emails
+            </button>
+            <button
+              type="button"
+              class="segmented__btn"
+              id="asset-landing"
+              role="radio"
+              aria-checked="false"
+              data-asset="landing"
+            >
+              Landing Pages
+            </button>
+          </div>
+        </section>
+
+        <section class="name-picker" aria-labelledby="content-name-label">
+          <header class="name-picker__header">
+            <h2 id="content-name-label" class="name-picker__title">Content Name</h2>
+          </header>
+          <div class="name-picker__search">
+            <span class="name-picker__search-icon" aria-hidden="true">
+              <svg
+                class="name-picker__search-svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="7"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M16 16l5 5"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </span>
+            <input
+              type="search"
+              id="content-filter"
+              class="name-picker__search-input"
+              placeholder="Search by..."
+              autocomplete="off"
+              aria-label="Search content names"
+            />
+          </div>
+          <div class="name-picker__body">
+            <ul
+              id="content-list"
+              class="name-picker__list"
+              role="listbox"
+              aria-label="Content names"
+            ></ul>
+          </div>
+          <footer class="name-picker__footer">
+            <div class="name-picker__pager">
+              <button type="button" class="pager-btn" id="pager-prev" aria-label="Previous page">
+                ‹
+              </button>
+              <span class="name-picker__pager-meta" id="pager-meta"></span>
+              <button type="button" class="pager-btn" id="pager-next" aria-label="Next page">
+                ›
+              </button>
+            </div>
+          </footer>
+        </section>
+      </aside>
+
+      <main class="preview" aria-label="Content preview">
+        <div class="preview__toolbar">
+          <button
+            type="button"
+            id="sidebar-toggle"
+            class="sidebar-toggle"
+            aria-controls="filter-sidebar"
+            aria-expanded="true"
+          >
+            <span class="sidebar-toggle__icon" aria-hidden="true">‹</span>
+            <span class="sidebar-toggle__label">Hide filters</span>
+          </button>
+        </div>
+        <div
+          id="metadata-truncation-banner"
+          class="truncation-banner"
+          hidden
+          role="alert"
+        >
+          <p class="truncation-banner__text">
+            Results may be incomplete — this view loaded the maximum of 50,000 rows.
+            Narrow filters (academic year or program solution) to see more.
+          </p>
+          <button
+            type="button"
+            id="metadata-truncation-dismiss"
+            class="truncation-banner__dismiss"
+          >
+            Dismiss
+          </button>
+        </div>
+        <div id="preview-area" class="preview__blank">
+          <iframe
+            id="preview-frame"
+            class="preview__iframe"
+            title="Content preview"
+            sandbox="allow-same-origin allow-popups"
+          ></iframe>
+        </div>
+      </main>
+    </div>
+
+    <div
+      id="help-modal"
+      class="help-modal"
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="help-modal-title"
+    >
+      <div class="help-modal__backdrop" data-help-close tabindex="-1"></div>
+      <div class="help-modal__panel" role="document">
+        <header class="help-modal__header">
+          <h2 id="help-modal-title" class="help-modal__title">How to use this app</h2>
+          <button
+            type="button"
+            id="help-modal-close"
+            class="help-modal__close"
+            aria-label="Close help"
+          >
+            ×
+          </button>
+        </header>
+        <div class="help-modal__body">
+          <div class="help-modal__textbox" tabindex="0">
+          <p class="help-modal__intro">
+            Browse campaign email and landing page content for one client at a time.
+            Work through the filters on the left; the preview updates on the right.
+            This public build uses <strong>synthetic mock data</strong> only — no Domo connection.
+          </p>
+          <h3 class="help-modal__section-title">Steps</h3>
+          <ol class="help-steps">
+            <li>
+              <strong>Select a client</strong> — Required first. Loads that partition’s
+              content list and filter options.
+            </li>
+            <li>
+              <strong>Academic years</strong> (optional) — Click one or more year chips to
+              narrow the list. Click again to deselect. Leave empty for all years.
+            </li>
+            <li>
+              <strong>Program solutions</strong> (optional) — Click one or more chips to
+              filter by program solution. Leave empty for all.
+            </li>
+            <li>
+              <strong>Asset type</strong> — Switch between <em>Emails</em> and
+              <em>Landing Pages</em>.
+            </li>
+            <li>
+              <strong>Content name</strong> — Search by title, then click a row to preview.
+              Use the pager if there are many results.
+            </li>
+            <li>
+              <strong>Preview</strong> — Rendered on the right. For emails, header lines
+              (Subject, From, Pre-Header) appear above the HTML body.
+            </li>
+          </ol>
+          <h3 class="help-modal__section-title">Other controls</h3>
+          <ul class="help-controls">
+            <li>
+              <strong>Reset</strong> — Clears the client and all filters so you can start
+              over.
+            </li>
+            <li>
+              <strong>Hide filters / Show filters</strong> — Collapses the sidebar to give
+              more room to the preview.
+            </li>
+            <li>
+              <strong>Truncation banner</strong> — If shown, the dataset hit the row limit;
+              narrow academic year or program solution filters to load a smaller set.
+            </li>
+          </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="mock-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
